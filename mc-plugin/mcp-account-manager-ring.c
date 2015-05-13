@@ -60,6 +60,12 @@ typedef struct
   gchar *path;
 } DelayedSignalData;
 
+static gchar*
+account_name_by_path (const gchar *path)
+{
+  return g_strconcat ("ring/tel", path, NULL);
+}
+
 static void
 remove_modem (McpAccountManagerRing *self,
     const gchar *path)
@@ -114,8 +120,8 @@ add_modem (McpAccountManagerRing *self,
 
   g_debug ("Adding modem %s\n", path);
 
-  account_name = mcp_account_manager_get_unique_name (self->priv->am,
-      "ring", "tel", "account");
+  /* Create name for account based on modem path. */
+  account_name = account_name_by_path (path);
 
 #define PARAM(key, value) g_hash_table_insert (params, key, g_strdup (value));
   params = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -306,6 +312,9 @@ account_manager_ring_get (const McpAccountStorage *storage,
   McpAccountManagerRing *self = (McpAccountManagerRing*) storage;
   GHashTable *params;
 
+  if (!account_name)
+    return FALSE;
+
   params = g_hash_table_lookup (self->priv->modems, account_name);
   if (params == NULL)
     return FALSE;
@@ -376,10 +385,26 @@ static guint
 account_manager_ring_get_restrictions (const McpAccountStorage *storage,
     const gchar *account_name)
 {
+  McpAccountManagerRing *self = (McpAccountManagerRing*) storage;
+
+  if (!account_name)
+    return G_MAXUINT;
+
+  if (!g_hash_table_lookup (self->priv->modems, account_name))
+    return G_MAXUINT;
+
   return TP_STORAGE_RESTRICTION_FLAG_CANNOT_SET_PARAMETERS |
       TP_STORAGE_RESTRICTION_FLAG_CANNOT_SET_ENABLED |
       TP_STORAGE_RESTRICTION_FLAG_CANNOT_SET_PRESENCE |
       TP_STORAGE_RESTRICTION_FLAG_CANNOT_SET_SERVICE;
+}
+
+static gboolean
+account_manager_ring_delete(const McpAccountStorage *storage, const McpAccountManager *am,
+        const gchar *account_name, const gchar *key)
+{
+  g_debug("%s: %s, %s", G_STRFUNC, account_name, key);
+  return TRUE;
 }
 
 static void
@@ -390,6 +415,7 @@ account_storage_iface_init (McpAccountStorageIface *iface)
   iface->priority = PLUGIN_PRIORITY;
   iface->provider = PLUGIN_PROVIDER;
 
+  iface->delete = account_manager_ring_delete;
   iface->get = account_manager_ring_get;
   iface->list = account_manager_ring_list;
   iface->ready = account_manager_ring_ready;
