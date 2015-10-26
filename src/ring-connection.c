@@ -908,17 +908,33 @@ ring_connection_imsi_changed (ModemSIMService *sim,
                               gpointer _self)
 {
   TpBaseConnection *base = TP_BASE_CONNECTION (_self);
+  RingConnection *self = RING_CONNECTION (_self);
+  RingConnectionPrivate *priv = self->priv;
+  const char *imsi_string = 0;
 
   DEBUG ("enter");
 
-  if (RING_CONNECTION (_self)->priv->sim != sim)
+  if (priv->sim != sim)
     return;
 
-  if (base->status != TP_CONNECTION_STATUS_DISCONNECTED)
+  /* Update the recorded IMSI property values */
+  if (priv->sim)
     {
-      tp_base_connection_change_status (base,
-          TP_CONNECTION_STATUS_DISCONNECTED,
-          TP_CONNECTION_STATUS_REASON_NETWORK_ERROR);
+      imsi_string = modem_sim_get_imsi(priv->sim);
+      if (priv->text)
+          g_object_set(priv->text, "imsi", imsi_string, NULL);
+      if (priv->media)
+          g_object_set(priv->media, "imsi", imsi_string, NULL);
+    }
+
+  if (priv->imsi)
+    {
+      if (base->status != TP_CONNECTION_STATUS_DISCONNECTED)
+        {
+          tp_base_connection_change_status (base,
+              TP_CONNECTION_STATUS_DISCONNECTED,
+              TP_CONNECTION_STATUS_REASON_NETWORK_ERROR);
+        }
     }
 }
 
@@ -939,19 +955,18 @@ ring_connection_modem_interface_added (Modem *modem,
       g_object_set (self, "sim-service", oface, NULL);
 
       if (priv->sim)
-        imsi_string = modem_sim_get_imsi(priv->sim);
+        {
+          imsi_string = modem_sim_get_imsi(priv->sim);
+
+          priv->signals.imsi_notify =
+            g_signal_connect (priv->sim, "notify::imsi",
+                G_CALLBACK (ring_connection_imsi_changed), self);
+        }
 
       if (priv->text)
           g_object_set(priv->text, "imsi", imsi_string, NULL);
       if (priv->media)
           g_object_set(priv->media, "imsi", imsi_string, NULL);
-
-      if (priv->imsi)
-        {
-          priv->signals.imsi_notify =
-            g_signal_connect (priv->sim, "notify::imsi",
-                G_CALLBACK (ring_connection_imsi_changed), self);
-        }
     }
   else if (MODEM_IS_CALL_SERVICE (oface))
     {
