@@ -521,7 +521,8 @@ on_modem_added (DBusGProxy *_dummy,
 
   modem_oface_connect (MODEM_OFACE (modem));
 
-  g_assert (modem_oface_is_connected (MODEM_OFACE (modem)));
+  // Note: modem is not immediately connected since we now wait for properties query
+  //g_assert (modem_oface_is_connected (MODEM_OFACE (modem)));
 
   g_signal_emit (self, signals[SIGNAL_MODEM_ADDED], 0, modem);
 
