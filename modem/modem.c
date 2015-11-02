@@ -310,7 +310,8 @@ modem_connect (ModemOface *_self)
 {
   DEBUG ("(%p): enter", _self);
 
-  modem_oface_connect_properties (_self, FALSE);
+  // Request all modem properties, as some property notifications are not received
+  modem_oface_connect_properties (_self, TRUE);
 
   g_signal_connect (_self, "notify::interfaces",
       G_CALLBACK(on_notify_interfaces), _self);
