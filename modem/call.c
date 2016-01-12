@@ -354,8 +354,9 @@ modem_call_connect (ModemOface *_self)
 	  G_TYPE_STRING, G_TYPE_INVALID);
   dbus_g_proxy_connect_signal (proxy, "DisconnectReason",
 	  G_CALLBACK (on_disconnect_reason), self, NULL);
-  dbus_g_proxy_add_signal (proxy, "PropertyChanged",
-	  G_TYPE_STRING, G_TYPE_INVALID);
+
+  /* Note: "PropertyChanged" signal is already added by
+   * the modem_oface_connect_properties() call above. */
   dbus_g_proxy_connect_signal (proxy, "PropertyChanged",
 	  G_CALLBACK (on_propertychanged), self, NULL);
 
