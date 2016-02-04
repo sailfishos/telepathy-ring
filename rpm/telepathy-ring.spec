@@ -3,8 +3,8 @@ Name:       telepathy-ring
 %define keepstatic 1
 
 Summary:    GSM connection manager for the Telepathy framework
-Version:    2.2.1
-Release:    2
+Version:    2.5.2
+Release:    1
 Group:      System/Libraries
 License:    LGPLv2.1
 URL:        https://github.com/nemomobile/telepathy-ring/
