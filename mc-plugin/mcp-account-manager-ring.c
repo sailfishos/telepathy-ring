@@ -84,7 +84,10 @@ remove_modem (McpAccountManagerRing *self,
       return;
     }
 
-  g_debug ("Removing modem %s\n", path);
+  g_debug ("Modem removed %s", path);
+
+  /* Do not remove the account for modem, just
+   * set the account Disabled. */
 
   g_hash_table_iter_init (&iter, self->priv->modems);
   while (g_hash_table_iter_next (&iter, &key, &value))
@@ -93,8 +96,9 @@ remove_modem (McpAccountManagerRing *self,
 
       if (g_str_equal (g_hash_table_lookup (params, "param-modem"), path))
         {
-          g_signal_emit_by_name (self, "deleted", key);
-          g_hash_table_iter_remove (&iter);
+          g_debug ("Setting account %s (%s) Disabled", (gchar *) key, path);
+          g_hash_table_replace (params, "Enabled", g_strdup ("false"));
+          mcp_account_storage_emit_toggled ((McpAccountStorage *) self, key, FALSE);
           break;
         }
     }
@@ -106,6 +110,8 @@ add_modem (McpAccountManagerRing *self,
 {
   gchar *account_name;
   GHashTable *params;
+  GHashTableIter iter;
+  gpointer key, value;
 
   if (!self->priv->ready)
     {
@@ -118,7 +124,25 @@ add_modem (McpAccountManagerRing *self,
       return;
     }
 
-  g_debug ("Adding modem %s\n", path);
+  /* First look if we have already created account for the modem,
+   * and if so, set the account's status Enabled.
+   * Otherwise create new account for the modem. */
+
+  g_hash_table_iter_init (&iter, self->priv->modems);
+  while (g_hash_table_iter_next (&iter, &key, &value))
+    {
+      GHashTable *params = value;
+
+      if (g_str_equal (g_hash_table_lookup (params, "param-modem"), path))
+        {
+          g_debug ("Setting account %s (%s) Enabled", (gchar *) key, path);
+          g_hash_table_replace (params, "Enabled", g_strdup ("true"));
+          mcp_account_storage_emit_toggled ((McpAccountStorage *) self, key, TRUE);
+          return;
+        }
+    }
+
+  g_debug ("Adding account for modem %s", path);
 
   /* Create name for account based on modem path. */
   account_name = account_name_by_path (path);
