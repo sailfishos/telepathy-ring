@@ -840,6 +840,11 @@ void request_hold (TpSvcChannelInterfaceHold *iface,
       g_set_error(&error, TP_ERROR, TP_ERROR_DISCONNECTED,
           "Channel is not connected");
     }
+  else if (modem_call_is_member(instance)) 
+    {
+      g_set_error (&error, TP_ERROR, TP_ERROR_NOT_AVAILABLE,
+          "Multiparty call state cannot be set directly");
+    }
   else if (state == priv->hold.state || next == priv->hold.state)
     {
       priv->hold.reason = TP_LOCAL_HOLD_STATE_REASON_REQUESTED;

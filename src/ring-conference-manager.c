@@ -320,8 +320,8 @@ conference_channel_fixed_properties (void)
 
 static char const * const conference_channel_allowed_properties[] =
   {
-    TP_IFACE_CHANNEL ".InitialChannels",
-    TP_IFACE_CHANNEL ".TargetHandleType",
+    TP_IFACE_CHANNEL_INTERFACE_CONFERENCE ".InitialChannels",
+    TP_IFACE_CHANNEL_INTERFACE_CONFERENCE ".TargetHandleType",
     TP_IFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialAudio",
     TP_IFACE_CHANNEL_TYPE_STREAMED_MEDIA ".InitialVideo",
     NULL
@@ -331,7 +331,7 @@ RingInitialMembers *
 tp_asv_get_initial_members (GHashTable *properties)
 {
   return tp_asv_get_boxed (properties,
-      TP_IFACE_CHANNEL ".InitialChannels",
+      TP_IFACE_CHANNEL_INTERFACE_CONFERENCE ".InitialChannels",
       TP_ARRAY_TYPE_OBJECT_PATH_LIST);
 }
 
@@ -478,7 +478,6 @@ conference_manager_new_conference (RingConferenceManager *self,
       /* KVXXX: "tones", priv->tones, */
       "object-path", object_path,
       "initial-channels", initial,
-      "initial-audio", initial_audio,
       "initiator-handle", tp_base_connection_get_self_handle (
           TP_BASE_CONNECTION (priv->connection)),
       "requested", TRUE,

@@ -460,6 +460,9 @@ void ring_conference_channel_get_hold_state (TpSvcChannelInterfaceHold *iface,
       hold_reason = TP_LOCAL_HOLD_STATE_REASON_REQUESTED;
     }
 
+  priv->hold.state = hold_state;
+  priv->hold.requested = hold_state;
+
   tp_svc_channel_interface_hold_return_from_get_hold_state
     (context, hold_state, hold_reason);
 }
@@ -1625,6 +1628,8 @@ ring_conference_channel_join(RingConferenceChannel *self,
       priv->is_current[i] = TRUE;
     }
   }
+
+  ring_member_channel_joined(member, self);
   ring_conference_channel_emit_channel_merged(self, member, FALSE);
 
   return TRUE;
