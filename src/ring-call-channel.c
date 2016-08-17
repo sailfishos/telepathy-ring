@@ -2003,9 +2003,9 @@ ring_member_channel_method_split(
   DBusGMethodInvocation *context)
 {
   RingCallChannel *self = RING_CALL_CHANNEL(iface);
-  GError *error;
+  GError *error = NULL;
 
-  DEBUG("enter");
+  DEBUG("enter %p %p", self, RING_MEMBER_CHANNEL(self));
 
   if (ring_member_channel_is_in_conference(RING_MEMBER_CHANNEL(self))) {
     RingConferenceChannel *conference = self->priv->member.conference;
