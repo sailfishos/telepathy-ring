@@ -41,29 +41,34 @@ Requires:   %{name} = %{version}-%{release}
 %description devel
 %{summary}.
 
+%package doc
+Summary:   Documentation for %{name}
+Group:     Documentation
+Requires:  %{name} = %{version}-%{release}
+
+%description doc
+Man page for %{name}.
+
 %prep
 %setup -q -n %{name}-%{version}
-
 
 %build
 mkdir m4 || true
 
 %reconfigure 
-make %{?jobs:-j%jobs}
-
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
 %make_install
 
-
 %files
 %defattr(-,root,root,-)
+%license COPYING
 %{_datadir}/dbus-1/services/*
 %{_datadir}/telepathy/managers/*
 %{_libexecdir}/*
 %{_libdir}/mission-control-plugins.0/mcp-account-manager-ring.so
-%doc %{_mandir}/man8/telepathy-ring.8.gz
 
 %files tests
 %defattr(-,root,root,-)
@@ -73,3 +78,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_libdir}/*.a
 %{_includedir}/*
+
+%files doc
+%defattr(-,root,root,-)
+%{_mandir}/man*/%{name}.*
