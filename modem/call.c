@@ -1034,6 +1034,8 @@ modem_call_send_dtmf (ModemCall *self, char const *dialstring,
         case '9':
         case '#':
         case '*':
+        case ',':
+        case '.':
           modemstring[i] = dialstring[i];
         break;
 

@@ -1330,7 +1330,7 @@ _modem_call_validate_address (char const *address)
     return "invalid service code";
 
   /* Possible dialstring */
-  m = strspn (address + n, "0123456789abc*#pwPW");
+  m = strspn (address + n, "0123456789abc*#pwPW,.");
   if (address[n + m] != '\0')
     {
       if (m == 0)
