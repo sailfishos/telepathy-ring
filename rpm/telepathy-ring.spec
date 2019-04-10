@@ -7,10 +7,12 @@ Version:    2.5.2
 Release:    1
 Group:      System/Libraries
 License:    LGPLv2.1
-URL:        https://github.com/nemomobile/telepathy-ring/
+URL:        https://git.merproject.org/mer-core/telepathy-ring/
 Source0:    %{name}-%{version}.tar.bz2
+Source1:    %{name}.privileges
 Requires:   ofono
 Requires:   telepathy-mission-control
+Requires:   mapplauncherd
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(check)
 BuildRequires:  pkgconfig(libxslt)
@@ -61,6 +63,8 @@ make %{?_smp_mflags}
 %install
 rm -rf %{buildroot}
 %make_install
+install -D -m0644 %{SOURCE1} \
+        %{buildroot}%{_datadir}/mapplauncherd/privileges.d/%{name}.privileges
 
 %files
 %defattr(-,root,root,-)
@@ -69,6 +73,7 @@ rm -rf %{buildroot}
 %{_datadir}/telepathy/managers/*
 %{_libexecdir}/*
 %{_libdir}/mission-control-plugins.0/mcp-account-manager-ring.so
+%{_datadir}/mapplauncherd/privileges.d/%{name}.privileges
 
 %files tests
 %defattr(-,root,root,-)
