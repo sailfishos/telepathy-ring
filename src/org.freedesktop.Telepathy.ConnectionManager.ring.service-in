@@ -1,4 +1,4 @@
 [D-BUS Service]
 Name=org.freedesktop.Telepathy.ConnectionManager.ring
-Exec=@libexecdir@/telepathy-ring
+Exec=/usr/bin/invoker --type=generic @libexecdir@/telepathy-ring
 
