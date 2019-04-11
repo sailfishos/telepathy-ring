@@ -25,7 +25,10 @@
 
 #include "ring-debug.h"
 #include "ring-connection-manager.h"
+#include "access.h"
 
+#include <dbus/dbus-glib.h>
+#include <dbus/dbus-glib-lowlevel.h>
 #include <telepathy-glib/run.h>
 
 #include <stdlib.h>
@@ -45,6 +48,23 @@
 static TpBaseConnectionManager *
 telepathy_ring_connection_manager_new(void)
 {
+  DBusConnection *connection = NULL;
+  TpDBusDaemon *bus_daemon;
+  GError *error = NULL;
+
+  bus_daemon = tp_dbus_daemon_dup(&error);
+  if (!bus_daemon) {
+    DEBUG("could not get dbus daemon %s", error->message);
+    g_error_free(error);
+    exit(4);
+  }
+
+  connection = dbus_g_connection_get_connection(
+      ((TpProxy *) bus_daemon)->dbus_connection);
+  dbus_connection_add_filter(connection, access_filter_non_privileged,
+      access_user_data_new(), access_user_data_free);
+  g_object_unref(bus_daemon);
+
   return (TpBaseConnectionManager *)
     g_object_new(RING_TYPE_CONNECTION_MANAGER, NULL);
 }

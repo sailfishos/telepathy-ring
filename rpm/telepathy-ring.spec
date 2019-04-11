@@ -22,6 +22,7 @@ BuildRequires:  pkgconfig(uuid)
 BuildRequires:  pkgconfig(telepathy-glib) >= 0.11.7
 BuildRequires:  pkgconfig(mission-control-plugins)
 BuildRequires:  pkgconfig(libngf0) >= 0.24
+BuildRequires:  pkgconfig(libdbusaccess)
 BuildRequires:  python >= 2.5
 
 %description
