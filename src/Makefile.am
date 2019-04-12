@@ -12,7 +12,8 @@
 # -----------------------------------------------------------------------------
 # Headers and libraries
 
-AM_CFLAGS = $(ERROR_CFLAGS) @GLIB_CFLAGS@ @DBUS_CFLAGS@ @TP_CFLAGS@
+AM_CFLAGS = $(ERROR_CFLAGS) @GLIB_CFLAGS@ @DBUS_CFLAGS@ @TP_CFLAGS@ \
+	@DBUSACCESS_CFLAGS@
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I${top_builddir}
 AM_LDFLAGS =
 
@@ -66,10 +67,12 @@ libtpring_la_SOURCES = \
 TP_EXTLIB =
 TP_EXTLIB += $(top_builddir)/ring-extensions/libtpextensions.a
 
+telepathy_ring_SOURCES = access.h access.c telepathy-ring.c
+
 telepathy_ring_LDADD = \
 	libtpring.la $(TP_EXTLIB) \
 	../modem/libmodem-glib.la \
-	@TP_LIBS@ @DBUS_LIBS@ @GLIB_LIBS@ \
+	@TP_LIBS@ @DBUS_LIBS@ @GLIB_LIBS@ @DBUSACCESS_LIBS@ \
 	-lpthread
 
 # ----------------------------------------------------------------------
