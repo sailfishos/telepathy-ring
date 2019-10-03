@@ -6,8 +6,8 @@ Summary:    GSM connection manager for the Telepathy framework
 Version:    2.5.2
 Release:    1
 Group:      System/Libraries
-License:    LGPLv2.1
-URL:        https://git.merproject.org/mer-core/telepathy-ring/
+License:    LGPLv2+
+URL:        https://git.sailfishos.org/mer-core/telepathy-ring/
 Source0:    %{name}-%{version}.tar.bz2
 Source1:    %{name}.privileges
 Requires:   ofono
@@ -30,7 +30,6 @@ BuildRequires:  python >= 2.5
 
 %package tests
 Summary:    Tests for %{name}
-Group:      System/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description tests
