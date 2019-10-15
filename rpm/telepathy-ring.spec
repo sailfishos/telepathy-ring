@@ -3,7 +3,7 @@ Name:       telepathy-ring
 %define keepstatic 1
 
 Summary:    GSM connection manager for the Telepathy framework
-Version:    2.5.2
+Version:    2.5.6
 Release:    1
 Group:      System/Libraries
 License:    LGPLv2+
