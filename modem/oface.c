@@ -33,6 +33,7 @@
 #include "modem/ofono.h"
 
 #include <dbus/dbus-glib.h>
+#include <dbus/dbus.h>
 
 #include "signals-marshal.h"
 
@@ -577,10 +578,11 @@ modem_oface_request_properties (ModemOface *self,
 
   g_return_val_if_fail (MODEM_IS_OFACE(self), NULL);
 
-  return modem_request_begin (self, self->priv->proxy,
+  return modem_request_with_timeout (self, self->priv->proxy,
       "GetProperties",
       reply_to_get_properties,
       G_CALLBACK (callback), user_data,
+      DBUS_TIMEOUT_INFINITE,
       G_TYPE_INVALID);
 }
 
