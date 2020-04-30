@@ -81,6 +81,14 @@ telepathy_ring_LDADD = \
 managerdir = $(datadir)/telepathy/managers
 dist_manager_DATA = ring.manager
 
+systemdservice = telepathy-ring.service
+
+systemdservicedir = $(SYSTEMD_USER_SERVICES_DIR)
+
+systemdservice_DATA = ${systemdservice}
+
+${systemdservice} : Makefile
+
 service = org.freedesktop.Telepathy.ConnectionManager.ring.service
 
 # configure script would insert ${prefix}/lib/telepathy-ring in service file
@@ -93,8 +101,8 @@ servicedir = $(DBUS_SERVICES_DIR)
 
 service_DATA = ${service}
 
-${service} : Makefile
+${service} : ${systemdservice} Makefile
 
-EXTRA_DIST = ${service}-in ${handlers}
+EXTRA_DIST = ${service}-in ${systemdservice}-in ${handlers}
 
 CLEANFILES = ${service}
