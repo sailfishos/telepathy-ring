@@ -69,6 +69,7 @@ install -D -m0644 %{SOURCE1} \
 %files
 %defattr(-,root,root,-)
 %license COPYING
+%{_libdir}/systemd/user/*
 %{_datadir}/dbus-1/services/*
 %{_datadir}/telepathy/managers/*
 %{_libexecdir}/*

@@ -1,0 +1,9 @@
+[Unit]
+Description=Telepathy connection manager for cellular
+After=dbus.socket pre-user-session.target
+Requires=dbus.socket
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.Telepathy.ConnectionManager.ring
+ExecStart=/usr/bin/invoker --type=generic @libexecdir@/telepathy-ring
