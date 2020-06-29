@@ -1034,12 +1034,10 @@ modem_call_send_dtmf (ModemCall *self, char const *dialstring,
         case '9':
         case '#':
         case '*':
-        case ',':
-        case '.':
           modemstring[i] = dialstring[i];
         break;
 
-        case 'p': case 'P': modemstring[i] = 'p'; break;
+        case ',': case 'p': case 'P': modemstring[i] = 'p'; break;
         case 'w': case 'W': modemstring[i] = 'w'; break;
         case 'a': case 'A': modemstring[i] = 'a'; break;
         case 'b': case 'B': modemstring[i] = 'b'; break;

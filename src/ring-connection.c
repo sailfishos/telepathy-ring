@@ -562,7 +562,7 @@ param_filter_isdn(TpCMParamSpec const *paramspec,
     str++;
 
   for (len = 0; *str; str++) {
-    if (strchr(" -()", *str))  /* Skip fillers */
+    if (strchr(" .-()", *str))  /* Skip fillers */
       continue;
 
     if (!strchr("0123456789", *str)) {
@@ -781,7 +781,7 @@ ring_normalize_contact (char const *input,
   if (g_strcasecmp(input, ring_self_handle_name) == 0)
     return g_strdup(ring_self_handle_name);
 
-  if (strlen(input) == strspn(input, "()- "))
+  if (strlen(input) == strspn(input, "()-. "))
     return g_strdup("");        /* Anonymous */
 
   sos = modem_call_get_valid_emergency_urn(input);
@@ -796,9 +796,9 @@ ring_normalize_contact (char const *input,
   /* Remove usual extra chars like (- ) */
   for (i = j = 0; s[i]; i++) {
     switch (s[i]) {
-      case '(': case ')': case '-': case ' ':
+      case '(': case ')': case '-': case '.': case ' ':
         continue;
-      case 'P': case 'p':
+      case 'P': case 'p': case ',':
         s[j++] = 'p';
         break;
       case 'W': case 'w':
