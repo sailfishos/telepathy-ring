@@ -5,7 +5,6 @@ Name:       telepathy-ring
 Summary:    GSM connection manager for the Telepathy framework
 Version:    2.5.6
 Release:    1
-Group:      System/Libraries
 License:    LGPLv2+
 URL:        https://git.sailfishos.org/mer-core/telepathy-ring/
 Source0:    %{name}-%{version}.tar.bz2
@@ -24,6 +23,7 @@ BuildRequires:  pkgconfig(mission-control-plugins)
 BuildRequires:  pkgconfig(libngf0) >= 0.24
 BuildRequires:  pkgconfig(libdbusaccess)
 BuildRequires:  python >= 2.5
+BuildRequires:  systemd
 
 %description
 %{summary}.
@@ -37,7 +37,6 @@ Requires:   %{name} = %{version}-%{release}
 
 %package devel
 Summary:    Development files for %{name}
-Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
@@ -45,7 +44,6 @@ Requires:   %{name} = %{version}-%{release}
 
 %package doc
 Summary:   Documentation for %{name}
-Group:     Documentation
 Requires:  %{name} = %{version}-%{release}
 
 %description doc
@@ -69,7 +67,7 @@ install -D -m0644 %{SOURCE1} \
 %files
 %defattr(-,root,root,-)
 %license COPYING
-%{_libdir}/systemd/user/*
+%{_userunitdir}/*
 %{_datadir}/dbus-1/services/*
 %{_datadir}/telepathy/managers/*
 %{_libexecdir}/*
