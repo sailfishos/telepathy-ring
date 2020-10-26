@@ -9,6 +9,7 @@ License:    LGPLv2+
 URL:        https://git.sailfishos.org/mer-core/telepathy-ring/
 Source0:    %{name}-%{version}.tar.bz2
 Source1:    %{name}.privileges
+Patch0:     0001-python3-changes.patch
 Requires:   ofono
 Requires:   telepathy-mission-control
 Requires:   mapplauncherd
@@ -22,7 +23,7 @@ BuildRequires:  pkgconfig(telepathy-glib) >= 0.11.7
 BuildRequires:  pkgconfig(mission-control-plugins)
 BuildRequires:  pkgconfig(libngf0) >= 0.24
 BuildRequires:  pkgconfig(libdbusaccess)
-BuildRequires:  python >= 2.5
+BuildRequires:  python3-devel
 BuildRequires:  systemd
 
 %description
@@ -50,7 +51,7 @@ Requires:  %{name} = %{version}-%{release}
 Man page for %{name}.
 
 %prep
-%setup -q -n %{name}-%{version}
+%autosetup -p1 -n %{name}-%{version}
 
 %build
 mkdir m4 || true
