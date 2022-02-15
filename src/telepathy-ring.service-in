@@ -6,4 +6,6 @@ Requires=dbus.socket
 [Service]
 Type=dbus
 BusName=org.freedesktop.Telepathy.ConnectionManager.ring
-ExecStart=/usr/bin/invoker --type=generic @libexecdir@/telepathy-ring
+ExecStart=/usr/bin/invoker --type=generic --keep-oom-score @libexecdir@/telepathy-ring
+Restart=always
+OOMScoreAdjust=-500
