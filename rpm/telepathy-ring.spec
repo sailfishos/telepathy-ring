@@ -25,6 +25,9 @@ BuildRequires:  pkgconfig(libngf0) >= 0.24
 BuildRequires:  pkgconfig(libdbusaccess)
 BuildRequires:  pkgconfig(python3)
 BuildRequires:  pkgconfig(systemd)
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  libtool
 
 %description
 %{summary}.
