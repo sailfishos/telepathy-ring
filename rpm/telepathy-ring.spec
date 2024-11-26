@@ -6,7 +6,7 @@ Summary:    GSM connection manager for the Telepathy framework
 Version:    2.5.6
 Release:    1
 License:    LGPLv2+
-URL:        https://git.sailfishos.org/mer-core/telepathy-ring/
+URL:        https://github.com/sailfishos/telepathy-ring
 Source0:    %{name}-%{version}.tar.bz2
 Source1:    %{name}.privileges
 Patch0:     0001-python3-changes.patch
@@ -60,16 +60,14 @@ Man page for %{name}.
 mkdir m4 || true
 
 %reconfigure 
-make %{?_smp_mflags}
+%make_build
 
 %install
-rm -rf %{buildroot}
 %make_install
 install -D -m0644 %{SOURCE1} \
         %{buildroot}%{_datadir}/mapplauncherd/privileges.d/%{name}.privileges
 
 %files
-%defattr(-,root,root,-)
 %license COPYING
 %{_userunitdir}/*
 %{_datadir}/dbus-1/services/*
@@ -79,14 +77,11 @@ install -D -m0644 %{SOURCE1} \
 %{_datadir}/mapplauncherd/privileges.d/%{name}.privileges
 
 %files tests
-%defattr(-,root,root,-)
 /opt/tests/%{name}/*
 
 %files devel
-%defattr(-,root,root,-)
 %{_libdir}/*.a
 %{_includedir}/*
 
 %files doc
-%defattr(-,root,root,-)
 %{_mandir}/man*/%{name}.*
