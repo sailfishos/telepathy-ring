@@ -30,6 +30,7 @@ from libglibcodegen import Signature, type_to_gtype, cmp_by_name, \
         NS_TP, dbus_gutils_wincaps_to_uscore, \
         signal_to_marshal_name, method_to_glue_marshal_name
 
+from functools import cmp_to_key
 
 NS_TP = "http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0"
 
@@ -75,17 +76,17 @@ class Generator(object):
         self.allow_havoc = allow_havoc
 
     def h(self, s):
-        if isinstance(s, unicode):
+        if isinstance(s, str):
             s = s.encode('utf-8')
         self.__header.append(s)
 
     def b(self, s):
-        if isinstance(s, unicode):
+        if isinstance(s, str):
             s = s.encode('utf-8')
         self.__body.append(s)
 
     def d(self, s):
-        if isinstance(s, unicode):
+        if isinstance(s, str):
             s = s.encode('utf-8')
         self.__docs.append(s)
 
@@ -712,7 +713,7 @@ class Generator(object):
 
     def __call__(self):
         nodes = self.dom.getElementsByTagName('node')
-        nodes.sort(cmp_by_name)
+        nodes.sort(key=cmp_to_key(cmp_by_name))
 
         self.h('#include <glib-object.h>')
         self.h('#include <dbus/dbus-glib.h>')
@@ -742,13 +743,13 @@ class Generator(object):
 
         self.h('')
         self.b('')
-        open(self.basename + '.h', 'w').write('\n'.join(self.__header))
-        open(self.basename + '.c', 'w').write('\n'.join(self.__body))
-        open(self.basename + '-gtk-doc.h', 'w').write('\n'.join(self.__docs))
+        open(self.basename + '.h', 'wb').write(b"\n".join(self.__header))
+        open(self.basename + '.c', 'wb').write(b"\n".join(self.__body))
+        open(self.basename + '-gtk-doc.h', 'wb').write(b"\n".join(self.__docs))
 
 
 def cmdline_error():
-    print """\
+    print("""\
 usage:
     gen-ginterface [OPTIONS] xmlfile Prefix_
 options:
@@ -768,7 +769,7 @@ options:
             void symbol (DBusGMethodInvocation *context)
         and return some sort of "not implemented" error via
             dbus_g_method_return_error (context, ...)
-"""
+""")
     sys.exit(1)
 
 

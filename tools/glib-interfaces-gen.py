@@ -13,9 +13,9 @@ class Generator(object):
         assert declfile.endswith('.h')
         docfile = declfile[:-2] + '-gtk-doc.h'
 
-        self.impls = open(implfile, 'w')
-        self.decls = open(declfile, 'w')
-        self.docs = open(docfile, 'w')
+        self.impls = open(implfile, 'wb')
+        self.decls = open(declfile, 'wb')
+        self.docs = open(docfile, 'wb')
         self.spec = get_by_path(dom, "spec")[0]
 
     def h(self, code):

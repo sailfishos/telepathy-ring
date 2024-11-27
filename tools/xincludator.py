@@ -5,13 +5,15 @@ import codecs, locale
 import os
 import xml.dom.minidom
 
-stdout = codecs.getwriter('utf-8')(stdout)
+
+
+stdout.reconfigure(encoding='utf-8')
 
 NS_XI = 'http://www.w3.org/2001/XInclude'
 
 def xincludate(dom, base, dropns = []):
     remove_attrs = []
-    for i in xrange(dom.documentElement.attributes.length):
+    for i in range(dom.documentElement.attributes.length):
         attr = dom.documentElement.attributes.item(i)
         if attr.prefix == 'xmlns':
             if attr.localName in dropns:

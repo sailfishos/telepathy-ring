@@ -9,7 +9,6 @@ License:    LGPLv2+
 URL:        https://github.com/sailfishos/telepathy-ring
 Source0:    %{name}-%{version}.tar.bz2
 Source1:    %{name}.privileges
-Patch0:     0001-python3-changes.patch
 Requires:   ofono
 Requires:   telepathy-mission-control
 Requires:   mapplauncherd

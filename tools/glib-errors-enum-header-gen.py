@@ -12,29 +12,29 @@ class Generator(object):
         self.errors = self.dom.getElementsByTagNameNS(NS_TP, 'errors')[0]
 
     def do_header(self):
-        print '/* Generated from the Telepathy spec\n'
+        print('/* Generated from the Telepathy spec\n')
         copyrights = self.errors.getElementsByTagNameNS(NS_TP, 'copyright')
         for copyright in copyrights:
-            print get_descendant_text(copyright)
+            print(get_descendant_text(copyright))
         license = self.errors.getElementsByTagNameNS(NS_TP, 'license')[0]
-        print '\n' + get_descendant_text(license) + '\n*/'
+        print('\n' + get_descendant_text(license) + '\n*/')
 
     def do_gtkdoc(self):
         for error in self.errors.getElementsByTagNameNS(NS_TP, 'error'):
             ns = error.parentNode.getAttribute('namespace')
             nick = error.getAttribute('name').replace(' ', '')
             enum = 'TP_ERROR_' + camelcase_to_upper(nick.replace('.', ''))
-            print ' * @' + enum + ': ' + ns + '.' + nick + ':'
-            print ' *     ' + get_docstring(error) + '    '
+            print(' * @' + enum + ': ' + ns + '.' + nick + ':')
+            print(' *     ' + get_docstring(error) + '    ')
 
     def do_enumnames(self):
         for error in self.errors.getElementsByTagNameNS(NS_TP, 'error'):
             nick = error.getAttribute('name').replace(' ', '')
             enum = 'TP_ERROR_' + camelcase_to_upper(nick.replace('.', ''))
-            print '    ' + enum + ','
+            print('    ' + enum + ',')
 
     def do_get_type(self):
-        print """
+        print("""
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -47,23 +47,23 @@ GType tp_error_get_type (void);
  * The GType of the Telepathy error enumeration.
  */
 #define TP_TYPE_ERROR (tp_error_get_type())
-"""
+""")
 
     def do_enum(self):
-        print """\
+        print("""\
 /**
- * TpError:"""
+ * TpError:""")
         self.do_gtkdoc()
-        print """\
+        print("""\
  *
  * Enumerated type representing the Telepathy D-Bus errors.
  */
-typedef enum {"""
+typedef enum {""")
         self.do_enumnames()
-        print """\
+        print("""\
 } TpError;
 
-G_END_DECLS"""
+G_END_DECLS""")
 
     def __call__(self):
         self.do_header()

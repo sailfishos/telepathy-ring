@@ -28,9 +28,11 @@ NS_TP = "http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0"
 
 _ASCII_ALNUM = ascii_letters + digits
 
+def cmp_0(a, b):
+    return (a > b) - (a < b)
 
 def cmp_by_name(node1, node2):
-    return cmp(node1.getAttributeNode("name").nodeValue,
+    return cmp_0(node1.getAttributeNode("name").nodeValue,
                node2.getAttributeNode("name").nodeValue)
 
 
@@ -155,7 +157,7 @@ class _SignatureIter:
     def __init__(self, string):
         self.remaining = string
 
-    def next(self):
+    def __next__(self):
         if self.remaining == '':
             raise StopIteration
 
