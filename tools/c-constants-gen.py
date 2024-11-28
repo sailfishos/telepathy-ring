@@ -11,8 +11,8 @@ class Generator(object):
         self.prefix = prefix + '_'
         self.spec = get_by_path(dom, "spec")[0]
 
-        self.__header = open(output_base + '.h', 'w')
-        self.__docs = open(output_base + '-gtk-doc.h', 'w')
+        self.__header = open(output_base + '.h', 'wb')
+        self.__docs = open(output_base + '-gtk-doc.h', 'wb')
 
     def __call__(self):
         self.do_header()
