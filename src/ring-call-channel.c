@@ -709,10 +709,10 @@ ring_call_channel_close(RingMediaChannel *_self, gboolean immediately)
 static gboolean
 ring_call_channel_alert_tone_needed(RingCallChannel *self)
 {
-    ModemCallService *call_service = ring_media_channel_get_call_service (self);
+    ModemCallService *call_service = ring_media_channel_get_call_service (RING_MEDIA_CHANNEL(self));
     GValue alert = G_VALUE_INIT;
     g_value_init (&alert, G_TYPE_BOOLEAN);
-    g_object_get_property(call_service, "alert-tone-needed", &alert);
+    g_object_get_property(G_OBJECT (call_service), "alert-tone-needed", &alert);
     return g_value_get_boolean(&alert);
 }
 

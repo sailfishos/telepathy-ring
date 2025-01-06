@@ -128,13 +128,3 @@ ring_call_content_remove (
 
   dbus_g_method_return_error (context, &error);
 }
-
-static void
-implement_call_content (gpointer klass,
-    gpointer unused G_GNUC_UNUSED)
-{
-#define IMPLEMENT(x) ring_svc_call_content_implement_##x (\
-  klass, ring_call_content_##x)
-  IMPLEMENT (remove);
-#undef IMPLEMENT
-}

@@ -58,6 +58,21 @@
 
 #include <string.h>
 
+extern gulong
+modem_sms_connect_to_outgoing_complete (ModemSMSService *self,
+                                        ModemSMSMessageHandler *handler,
+                                        gpointer data);
+
+extern gulong
+modem_sms_connect_to_outgoing_error (ModemSMSService *self,
+                                     ModemSMSMessageHandler *handler,
+                                     gpointer data);
+
+extern gulong
+modem_sms_connect_to_status_report (ModemSMSService *self,
+                                    ModemSMSMessageHandler *handler,
+                                    gpointer data);
+
 static void channel_manager_iface_init(gpointer, gpointer);
 
 G_DEFINE_TYPE_WITH_CODE(

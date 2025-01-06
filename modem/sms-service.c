@@ -966,7 +966,7 @@ reply_to_send_message (DBusGProxy *proxy,
 
     GValue srr = G_VALUE_INIT;
     g_value_init (&srr, G_TYPE_BOOLEAN);
-    g_object_get_property(self, "use-delivery-reports", &srr);
+    g_object_get_property(G_OBJECT (self), "use-delivery-reports", &srr);
     gboolean srr_bool = g_value_get_boolean(&srr);
     DEBUG("Status report requested for this message: %d", srr_bool);
 
