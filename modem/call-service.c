@@ -63,6 +63,7 @@ enum
   SIGNAL_INCOMING,
   SIGNAL_CREATED,
   SIGNAL_REMOVED,
+  SIGNAL_ALERT_TONE_NEEDED_CHANGED,
   N_SIGNALS
 };
 
@@ -461,6 +462,14 @@ modem_call_service_class_init (ModemCallServiceClass *klass)
         _modem__marshal_VOID__OBJECT,
         G_TYPE_NONE, 1,
         MODEM_TYPE_CALL);
+
+  signals[SIGNAL_ALERT_TONE_NEEDED_CHANGED] =
+    g_signal_new ("alert-tone-needed-changed", G_OBJECT_CLASS_TYPE (klass),
+        G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
+        0,
+        NULL, NULL,
+        _modem__marshal_VOID__VOID,
+        G_TYPE_NONE, 0);
 
   DEBUG ("leave");
 }
@@ -1461,9 +1470,10 @@ static DBusHandlerResult modem_call_agent_dbus_message_handler(
     {
       DEBUG("'alert needed' changed from %d to %d",
           self->priv->alert_tone_needed, playTone);
-    }
 
-    self->priv->alert_tone_needed = playTone;
+      self->priv->alert_tone_needed = playTone;
+      g_signal_emit (self, signals[SIGNAL_ALERT_TONE_NEEDED_CHANGED], 0);
+    }
 
     return modem_call_agent_generic_dbus_message(conn, msg);
   }

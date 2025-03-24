@@ -123,6 +123,7 @@ struct _RingCallChannelPrivate
     gulong emergency;
     gulong waiting, on_hold, forwarded;
     gulong notify_multiparty;
+    gulong alert_tone_needed_changed;
   } signals;
 };
 
@@ -242,6 +243,8 @@ static void on_modem_call_on_hold(ModemCall *, int onhold, RingCallChannel *);
 static void on_modem_call_forwarded(ModemCall *, RingCallChannel *);
 static void on_modem_call_notify_multiparty(ModemCall *ci, GParamSpec *pspec, gpointer user_data);
 static void on_modem_call_waiting(ModemCall *, RingCallChannel *);
+static void on_modem_call_service_alert_tone_needed_changed(ModemCallService *,
+  RingCallChannel *);
 
 /* ====================================================================== */
 /* GObject interface */
@@ -709,10 +712,11 @@ ring_call_channel_close(RingMediaChannel *_self, gboolean immediately)
 static gboolean
 ring_call_channel_alert_tone_needed(RingCallChannel *self)
 {
-    ModemCallService *call_service = ring_media_channel_get_call_service (self);
+    ModemCallService *call_service = ring_media_channel_get_call_service (
+      RING_MEDIA_CHANNEL (self));
     GValue alert = G_VALUE_INIT;
     g_value_init (&alert, G_TYPE_BOOLEAN);
-    g_object_get_property(call_service, "alert-tone-needed", &alert);
+    g_object_get_property(G_OBJECT (call_service), "alert-tone-needed", &alert);
     return g_value_get_boolean(&alert);
 }
 
@@ -828,6 +832,9 @@ ring_call_channel_set_call_instance(RingMediaChannel *_self,
   RingCallChannel *self = RING_CALL_CHANNEL(_self);
   RingCallChannelPrivate *priv = self->priv;
 
+  ModemCallService *service = ring_media_channel_get_call_service (
+    RING_MEDIA_CHANNEL (self));
+
   if (ci) {
     priv->call_instance_seen = 1;
 
@@ -840,6 +847,10 @@ ring_call_channel_set_call_instance(RingMediaChannel *_self,
     priv->signals.forwarded = CONNECT("forwarded", forwarded);
     priv->signals.notify_multiparty = CONNECT("notify::multiparty", notify_multiparty);
 #undef CONNECT
+
+    priv->signals.alert_tone_needed_changed = g_signal_connect(service,
+      "alert-tone-needed-changed",
+      G_CALLBACK(on_modem_call_service_alert_tone_needed_changed), self);
   }
   else {
     ci = self->base.call_instance;
@@ -856,6 +867,11 @@ ring_call_channel_set_call_instance(RingMediaChannel *_self,
     DISCONNECT(forwarded);
     DISCONNECT(notify_multiparty);
 #undef DISCONNECT
+
+    if (priv->signals.alert_tone_needed_changed &&
+      g_signal_handler_is_connected(service, priv->signals.alert_tone_needed_changed)) {
+      g_signal_handler_disconnect(service, priv->signals.alert_tone_needed_changed);
+    } (priv->signals.alert_tone_needed_changed = 0);
   }
 }
 
@@ -1253,6 +1269,29 @@ on_modem_call_emergency(ModemCall *ci,
     tp_svc_channel_interface_service_point_emit_service_point_changed(
       (TpSvcChannelInterfaceServicePoint *)self, esp);
     ring_emergency_service_free(esp);
+  }
+}
+
+static void
+on_modem_call_service_alert_tone_needed_changed(ModemCallService *service,
+  RingCallChannel *self)
+{
+  guint state = 0;
+
+  if (self->base.call_instance == NULL) {
+    return;
+  }
+
+  g_object_get(self->base.call_instance, "state", &state, NULL);
+
+  if (state == MODEM_CALL_STATE_ALERTING &&
+      ring_call_channel_alert_tone_needed(self)) {
+    DEBUG("play local alert tone (no in-band audio)");
+    ring_media_channel_play_tone (RING_MEDIA_CHANNEL(self),
+      TONES_EVENT_RINGING, 0, 0);
+  }
+  if (!ring_call_channel_alert_tone_needed(self)) {
+    ring_media_channel_stop_playing(RING_MEDIA_CHANNEL(self), TRUE);
   }
 }
 
