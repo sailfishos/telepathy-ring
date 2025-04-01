@@ -32,6 +32,7 @@
 
 #include <dbus/dbus-glib.h>
 #include "signals-marshal.h"
+#include "errors.h"
 
 /* ------------------------------------------------------------------------ */
 
@@ -70,7 +71,6 @@ static void on_sms_history_status_report (DBusGProxy *proxy,
         GHashTable *dict,
         gpointer user_data)
 {
-  ModemSmsHistory *self = MODEM_SMS_HISTORY(user_data);
   ModemService *modemService = modem_service();
   if (!modemService)
     return;

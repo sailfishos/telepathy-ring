@@ -890,7 +890,7 @@ ring_text_manager_receive_status_report(RingTextManager *self,
   channel = get_text_channel(self, destination, 0, 0);
 
   if (channel)
-    ring_text_channel_receive_status_report(channel, token, success);
+    ring_text_channel_receive_status_report(channel, token, !!success);
 }
 
 #if nomore

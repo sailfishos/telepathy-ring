@@ -675,7 +675,9 @@ ring_media_channel_dtmf_start_tone_replied(ModemCall *call_instance,
 
   if (!error) {
     guchar dtmf = GPOINTER_TO_INT(modem_request_get_data(request, "StartTone"));
+#if 0 /* No local DTMF playback (handled by UI) */
     char const *event = strchr(ring_media_channel_dtmf_events, dtmf);
+#endif
 
     priv->dtmf.digit = dtmf;
 
@@ -1279,11 +1281,11 @@ on_modem_call_state(ModemCall *ci,
   if (state == MODEM_CALL_STATE_DISCONNECTED) {
     GValue causetype_value = G_VALUE_INIT;
     g_value_init (&causetype_value, G_TYPE_UINT);
-    g_object_get_property(ci, "causetype", &causetype_value);
+    g_object_get_property(G_OBJECT (ci), "causetype", &causetype_value);
     causetype = g_value_get_uint(&causetype_value);
     GValue cause_value = G_VALUE_INIT;
     g_value_init (&cause_value, G_TYPE_UINT);
-    g_object_get_property(ci, "cause", &cause_value);
+    g_object_get_property(G_OBJECT (ci), "cause", &cause_value);
     cause = g_value_get_uint(&cause_value);
     DEBUG("Call disconnected: causetype=%d, cause=%d", causetype, cause);
   }
