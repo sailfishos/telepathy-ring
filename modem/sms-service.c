@@ -582,7 +582,7 @@ modem_sms_connect_to_immediate_message (ModemSMSService *self,
 
 gulong
 modem_sms_connect_to_outgoing_complete (ModemSMSService *self,
-                                       ModemSMSMessageHandler *handler,
+                                       ModemSMSMessageOutgoingHandler *handler,
                                        gpointer data)
 {
   return g_signal_connect (self, "outgoing-complete",
@@ -591,7 +591,7 @@ modem_sms_connect_to_outgoing_complete (ModemSMSService *self,
 
 gulong
 modem_sms_connect_to_outgoing_error (ModemSMSService *self,
-                                       ModemSMSMessageHandler *handler,
+                                       ModemSMSMessageOutgoingErrorHandler *handler,
                                        gpointer data)
 {
   return g_signal_connect (self, "outgoing-error",
@@ -600,7 +600,7 @@ modem_sms_connect_to_outgoing_error (ModemSMSService *self,
 
 gulong
 modem_sms_connect_to_status_report (ModemSMSService *self,
-                                       ModemSMSMessageHandler *handler,
+                                       ModemSMSMessageStatusReportHandler *handler,
                                        gpointer data)
 {
   return g_signal_connect (self, "state-report",
@@ -966,7 +966,7 @@ reply_to_send_message (DBusGProxy *proxy,
 
     GValue srr = G_VALUE_INIT;
     g_value_init (&srr, G_TYPE_BOOLEAN);
-    g_object_get_property(self, "use-delivery-reports", &srr);
+    g_object_get_property(G_OBJECT (self), "use-delivery-reports", &srr);
     gboolean srr_bool = g_value_get_boolean(&srr);
     DEBUG("Status report requested for this message: %d", srr_bool);
 

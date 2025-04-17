@@ -29,6 +29,7 @@
 #include "modem/errors.h"
 
 #include <dbus/dbus-glib.h>
+#include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus.h>
 
 #include <libngf/ngf.h>
@@ -396,6 +397,6 @@ modem_tones_stop(ModemTones *self,
     notify_data->data = data;
 
     g_hash_table_insert(priv->notify_map, &notify_data->event_id, notify_data);
-    g_timeout_add_seconds(5, stop_cb, notify_data);
+    g_timeout_add_seconds(0, stop_cb, notify_data);
   }
 }

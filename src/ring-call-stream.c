@@ -76,14 +76,3 @@ ring_call_stream_request_receiving (
 
   dbus_g_method_return_error (context, &error);
 }
-
-static void
-implement_call_stream (gpointer klass,
-    gpointer unused G_GNUC_UNUSED)
-{
-#define IMPLEMENT(x) ring_svc_call_stream_implement_##x (\
-  klass, ring_call_stream_##x)
-  IMPLEMENT (set_sending);
-  IMPLEMENT (request_receiving);
-#undef IMPLEMENT
-}

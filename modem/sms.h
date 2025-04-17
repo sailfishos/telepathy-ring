@@ -81,6 +81,23 @@ typedef void ModemSMSMessageHandler (ModemSMSService *self,
     GHashTable *info,
     gpointer user_data);
 
+typedef void ModemSMSMessageOutgoingHandler (ModemSMSService *self,
+    gchar const *message,
+    char const *destination,
+    gpointer user_data);
+
+typedef void ModemSMSMessageOutgoingErrorHandler (ModemSMSService *self,
+    gchar const *message,
+    char const *destination,
+    GError const *error,
+    gpointer user_data);
+
+typedef void ModemSMSMessageStatusReportHandler (ModemSMSService *self,
+    gchar const *message,
+    char const *token,
+    gboolean const *success,
+    gpointer user_data);
+
 typedef void ModemSMSServiceReply (ModemSMSService *self,
   ModemRequest *request,
   GError const *error,
@@ -112,6 +129,18 @@ gulong modem_sms_connect_to_incoming_message (ModemSMSService *self,
 
 gulong modem_sms_connect_to_immediate_message (ModemSMSService *self,
     ModemSMSMessageHandler *handler,
+    gpointer data);
+
+gulong modem_sms_connect_to_outgoing_complete(ModemSMSService *self,
+    ModemSMSMessageOutgoingHandler *handler,
+    gpointer data);
+
+gulong modem_sms_connect_to_outgoing_error(ModemSMSService *self,
+    ModemSMSMessageOutgoingErrorHandler *handler,
+    gpointer data);
+
+gulong modem_sms_connect_to_status_report(ModemSMSService *self,
+    ModemSMSMessageStatusReportHandler *handler,
     gpointer data);
 
 guint64 modem_sms_service_time_connected (ModemSMSService const *self);

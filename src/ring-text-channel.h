@@ -72,9 +72,10 @@ char *ring_text_channel_destination(char const *inspection);
 gboolean ring_text_channel_can_handle(gpointer);
 void ring_text_channel_receive_deliver(RingTextChannel *, gpointer);
 
-void ring_text_channel_receive_status_report(RingTextChannel *, gpointer);
-
 #endif
+
+void ring_text_channel_receive_status_report(RingTextChannel *, char const *,
+    gboolean);
 
 void ring_text_channel_receive_text (RingTextChannel *self,
     gchar const *message_token,

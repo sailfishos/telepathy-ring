@@ -381,7 +381,7 @@ account_manager_ring_ready (const McpAccountStorage *storage,
   g_debug ("%s", G_STRFUNC);
 
   self->priv->ready = TRUE;
-  self->priv->am = g_object_ref (G_OBJECT (am));
+  self->priv->am = MCP_ACCOUNT_MANAGER(g_object_ref (G_OBJECT (am)));
 
   while ((data = g_queue_pop_head (self->priv->pending_signals)) != NULL)
     {
