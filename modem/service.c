@@ -62,6 +62,7 @@ enum {
   SIGNAL_MODEM_REMOVED,
   SIGNAL_IMEI_ADDED,
   SIGNAL_IMSI_ADDED,
+  SIGNAL_ALERT_TONE_NEEDED_CHANGED,
   N_SIGNALS
 };
 
@@ -336,6 +337,16 @@ modem_service_class_init(ModemServiceClass *klass)
       _modem__marshal_VOID__OBJECT_STRING,
       G_TYPE_NONE,
       2, MODEM_TYPE_MODEM, G_TYPE_STRING);
+
+  signals[SIGNAL_ALERT_TONE_NEEDED_CHANGED] = g_signal_new (
+      "alert-tone-needed-changed",
+      G_OBJECT_CLASS_TYPE (klass),
+      G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
+      0,
+      NULL, NULL,
+      g_cclosure_marshal_VOID__BOOLEAN,
+      G_TYPE_NONE, 1,
+      G_TYPE_BOOLEAN);
 
   g_type_class_add_private(klass, sizeof (ModemServicePrivate));
 

@@ -37,6 +37,7 @@
 #include <dbus/dbus-glib-lowlevel.h>
 
 #include "signals-marshal.h"
+#include "service.h"
 
 #include <string.h>
 #include <errno.h>
@@ -63,7 +64,6 @@ enum
   SIGNAL_INCOMING,
   SIGNAL_CREATED,
   SIGNAL_REMOVED,
-  SIGNAL_ALERT_TONE_NEEDED_CHANGED,
   N_SIGNALS
 };
 
@@ -462,14 +462,6 @@ modem_call_service_class_init (ModemCallServiceClass *klass)
         _modem__marshal_VOID__OBJECT,
         G_TYPE_NONE, 1,
         MODEM_TYPE_CALL);
-
-  signals[SIGNAL_ALERT_TONE_NEEDED_CHANGED] =
-    g_signal_new ("alert-tone-needed-changed", G_OBJECT_CLASS_TYPE (klass),
-        G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
-        0,
-        NULL, NULL,
-        _modem__marshal_VOID__VOID,
-        G_TYPE_NONE, 0);
 
   DEBUG ("leave");
 }
@@ -1453,10 +1445,12 @@ static DBusHandlerResult modem_call_agent_dbus_message_handler(
   }
   else if (strcmp("RingbackTone", method) == 0)
   {
-    ModemCallService *self = user_data;
+    ModemService *service = modem_service();
+
     dbus_bool_t playTone = 0;
     DBusMessageIter iter;
     dbus_message_iter_init(msg, &iter);
+
     if (dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_BOOLEAN)
     {
       dbus_message_iter_get_basic(&iter, &playTone);
@@ -1466,14 +1460,7 @@ static DBusHandlerResult modem_call_agent_dbus_message_handler(
       DEBUG ("Invalid arguments received, ignore");
     }
 
-    if (self->priv->alert_tone_needed != playTone)
-    {
-      DEBUG("'alert needed' changed from %d to %d",
-          self->priv->alert_tone_needed, playTone);
-
-      self->priv->alert_tone_needed = playTone;
-      g_signal_emit (self, signals[SIGNAL_ALERT_TONE_NEEDED_CHANGED], 0);
-    }
+    g_signal_emit_by_name (service, "alert-tone-needed-changed", playTone);
 
     return modem_call_agent_generic_dbus_message(conn, msg);
   }
