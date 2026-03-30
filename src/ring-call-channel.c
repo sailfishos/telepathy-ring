@@ -243,8 +243,8 @@ static void on_modem_call_on_hold(ModemCall *, int onhold, RingCallChannel *);
 static void on_modem_call_forwarded(ModemCall *, RingCallChannel *);
 static void on_modem_call_notify_multiparty(ModemCall *ci, GParamSpec *pspec, gpointer user_data);
 static void on_modem_call_waiting(ModemCall *, RingCallChannel *);
-static void on_modem_call_service_alert_tone_needed_changed(ModemCallService *,
-  RingCallChannel *);
+static void on_modem_call_service_alert_tone_needed_changed(ModemService *,
+  gboolean, RingCallChannel *);
 
 /* ====================================================================== */
 /* GObject interface */
@@ -832,8 +832,7 @@ ring_call_channel_set_call_instance(RingMediaChannel *_self,
   RingCallChannel *self = RING_CALL_CHANNEL(_self);
   RingCallChannelPrivate *priv = self->priv;
 
-  ModemCallService *service = ring_media_channel_get_call_service (
-    RING_MEDIA_CHANNEL (self));
+  ModemService *service = modem_service();
 
   if (ci) {
     priv->call_instance_seen = 1;
@@ -1273,8 +1272,8 @@ on_modem_call_emergency(ModemCall *ci,
 }
 
 static void
-on_modem_call_service_alert_tone_needed_changed(ModemCallService *service,
-  RingCallChannel *self)
+on_modem_call_service_alert_tone_needed_changed(ModemService *service,
+  gboolean tone_needed, RingCallChannel *self)
 {
   guint state = 0;
 
@@ -1282,15 +1281,28 @@ on_modem_call_service_alert_tone_needed_changed(ModemCallService *service,
     return;
   }
 
+  ModemCallService *call_service = ring_media_channel_get_call_service (
+    RING_MEDIA_CHANNEL (self));
+
+  GValue alert = G_VALUE_INIT;
+  g_value_init (&alert, G_TYPE_BOOLEAN);
+  g_object_get_property(G_OBJECT (call_service), "alert-tone-needed", &alert);
+
+  if (g_value_get_boolean(&alert) == tone_needed) {
+    return;
+  }
+  g_value_set_boolean(&alert, tone_needed);
+
+  g_object_set_property(G_OBJECT (call_service), "alert-tone-needed", &alert);
+
   g_object_get(self->base.call_instance, "state", &state, NULL);
 
-  if (state == MODEM_CALL_STATE_ALERTING &&
-      ring_call_channel_alert_tone_needed(self)) {
+  if (state == MODEM_CALL_STATE_ALERTING && tone_needed) {
     DEBUG("play local alert tone (no in-band audio)");
     ring_media_channel_play_tone (RING_MEDIA_CHANNEL(self),
       TONES_EVENT_RINGING, 0, 0);
   }
-  if (!ring_call_channel_alert_tone_needed(self)) {
+  if (!tone_needed) {
     ring_media_channel_stop_playing(RING_MEDIA_CHANNEL(self), TRUE);
   }
 }
